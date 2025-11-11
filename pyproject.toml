@@ -1,6 +1,6 @@
 [project]
 name = "rf-detr-training-pipeline"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A modular fine-tuning pipeline for RF-DETR (Real-time DEtection TRansformer) models"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -29,6 +29,12 @@ Issues = "https://github.com/Borda/rf-detr-training-pipeline/issues"
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "rf_detr_finetuning.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.ruff]
 line-length = 120

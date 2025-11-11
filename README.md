@@ -6,15 +6,17 @@ A modular fine-tuning pipeline for RF-DETR (Real-time DEtection TRansformer) mod
 
 ```
 rf-detr-training-pipeline/
-├── config/              # Configuration files for training and evaluation
-├── src/                 # Source code
-│   ├── data/           # Data loading and preprocessing
-│   ├── training/       # Training logic and loops
-│   ├── evaluation/     # Evaluation metrics and logic
-│   └── utils/          # Utility functions
-├── scripts/            # Executable scripts
-├── examples/           # Example usage and tutorials
-└── README.md           # This file
+├── config/                        # Configuration files for training and evaluation
+├── src/
+│   └── rf_detr_finetuning/       # Main package
+│       ├── data/                  # Dataset loading and preprocessing
+│       ├── training/              # Training loops and optimization
+│       ├── evaluation/            # Metrics and validation
+│       └── utils/                 # Logging, config, visualization
+├── scripts/                       # Executable training/inference scripts
+├── examples/                      # Usage tutorials and demos
+├── tests/                         # Test suite
+└── README.md                      # This file
 ```
 
 ## Requirements
@@ -23,19 +25,19 @@ rf-detr-training-pipeline/
 
 ## Modules
 
-### src/data
+### rf_detr_finetuning.data
 
 Contains data loading, preprocessing, and augmentation logic for RF-DETR training.
 
-### src/training
+### rf_detr_finetuning.training
 
 Implements training loops, optimizer configuration, and learning rate scheduling.
 
-### src/evaluation
+### rf_detr_finetuning.evaluation
 
 Provides evaluation metrics and validation logic for model assessment.
 
-### src/utils
+### rf_detr_finetuning.utils
 
 Contains utility functions for logging, configuration management, and visualization.
 
@@ -50,3 +52,7 @@ Configuration files are stored in the `config/` directory. See `config/README.md
 ## Scripts
 
 Executable scripts for training and evaluation are in the `scripts/` directory. See `scripts/README.md` for details.
+
+## Testing
+
+Tests are located in the `tests/` directory. See `tests/README.md` for details on running tests.
