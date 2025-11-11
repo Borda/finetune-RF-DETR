@@ -24,10 +24,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install package
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
+        run: pip install .
 
       - name: Validate package import and version
         run: |
-          python -c "import rf_detr_finetuning; print(f'Successfully imported rf_detr_finetuning v{rf_detr_finetuning.__version__}')"
+          import rf_detr_finetuning
+          print(rf_detr_finetuning.__version__)
+        shell: python
