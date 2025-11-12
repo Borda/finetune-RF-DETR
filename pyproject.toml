@@ -20,6 +20,11 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
+dependencies = [
+  "rfdetr",
+  "supervision",
+"opencv-python",
+]
 
 [project.urls]
 Homepage = "https://github.com/Borda/rf-detr-training-pipeline"
@@ -42,6 +47,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = [
+    "E",   # pycodestyle errors (includes E501 for line length)
     "F",   # Pyflakes
     "W",   # pycodestyle warnings
     "I",   # isort

@@ -2,7 +2,7 @@
 
 ## 🧠 Agents
 
-### - engineer
+### Engineer
 
 **Role**: RF-DETR fine-tuning and deployment specialist
 **Tools**: Python, Roboflow SDK, `rfdetr`, `supervision`, Weights & Biases
@@ -13,7 +13,7 @@
 - Ensure correct use of `optimize_for_inference()` and model export
 - Check reproducibility: fixed seeds, versioned datasets, consistent configs
 
-### - doc-scribe
+### Doc-Scribe
 
 **Role**: Documentation and reproducibility assistant
 **Tools**: Markdown, GitHub Wiki, W&B Reports
@@ -24,7 +24,7 @@
 - Ensure Roboflow dataset links and model IDs are documented
 - Track changes to `config.yaml` and document rationale
 
-### - mentor-bot
+### Mentor-Bot
 
 **Role**: Communication and feedback facilitator
 **Tools**: GitHub Issues, Discussions, Email Drafting
@@ -35,8 +35,6 @@
 - Track mentorship trial progress and flag missing responses
 - Help onboard new contributors with Roboflow-specific guides
 
-______________________________________________________________________
-
 ## 🔐 Permissions
 
 | Agent      | Branch Access  | PR Review | Issue Commenting |
@@ -44,8 +42,6 @@ ______________________________________________________________________
 | engineer   | `main`, `dev`  | ✅        | ✅               |
 | doc-scribe | `docs`, `main` | ✅        | ✅               |
 | mentor-bot | `main`         | ❌        | ✅               |
-
-______________________________________________________________________
 
 ## 📚 Context
 
@@ -55,8 +51,6 @@ Agents may read and reference:
 - `rfdetr/`, `supervision/`, `notebooks/`
 - W&B run metadata and Roboflow project/version strings
 
-______________________________________________________________________
-
 ## 🧭 Mission Rules
 
 - Never commit `.env` or API keys
@@ -65,18 +59,16 @@ ______________________________________________________________________
 - Dataset usage must include version pinning (e.g., `project/version` in Roboflow)
 - Inference scripts must use `get_model()` or `RFDETR*` classes from `rfdetr`
 
-______________________________________________________________________
-
 ## 🧪 Protocols
 
-### - Fine-Tuning Validation
+### Fine-Tuning Validation
 
 - Confirm `ROBOFLOW_API_KEY` is loaded securely
 - Validate dataset pull via `rf.load()` or CLI
 - Ensure correct resolution and class count in `config.yaml`
 - Check for `model.optimize_for_inference()` before export
 
-### - Documentation Update
+### Documentation Update
 
 - Update README if CLI, config, or training logic changes
 - Include example usage:
@@ -84,3 +76,10 @@ ______________________________________________________________________
   python train.py --config config.yaml
   python inference.py --image path/to/image.jpg --model rf-model/1
   ```
+
+## 📋 Best Practices
+
+### Code Comments
+
+When writing or modifying code, add comments if the code is not self-explanatory.
+This improves readability, maintainability, and helps other contributors understand complex logic or non-obvious decisions.
