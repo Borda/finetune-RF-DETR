@@ -1,36 +1,6 @@
-# RF-DETR Training Pipeline Examples
+# Real Use Case
 
-This directory contains examples and tutorials for using the RF-DETR training pipeline.
-
-## Installation
-
-To run the examples, install the package with CLI extras:
-
-```bash
-pip install -e .[cli,data]
-```
-
-This includes dependencies for the command-line interface (jsonargparse) and data downloading (kaggle).
-
-## Dataset Download
-
-Use the local CLI to download datasets. For example, to download the CCTV Weapon Dataset from Kaggle:
-
-```bash
-python -m rf_detr_finetuning download kaggle-dataset --name dataset/name --dest data
-```
-
-If authentication fails, you'll be prompted for your Kaggle username and API key.
-
-## Dataset Conversion
-
-To convert a YOLO dataset to COCO format with train/valid/test splits:
-
-```bash
-python -m rf_detr_finetuning convert yolo-to-coco --input_dir path/to/yolo/dataset --output_dir path/to/output --split_ratios 0.8 0.1 0.1
-```
-
-## Real Use Case: Weapon Detection in CCTV Footage
+## Weapon Detection in CCTV Footage
 
 1. Download the dataset as above.
 2. Prepare your data by converting to COCO format using the CLI:
