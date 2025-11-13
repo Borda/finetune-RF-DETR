@@ -10,6 +10,7 @@ present in function signatures.
 import datetime
 import json
 import logging
+import random
 import shutil
 from collections.abc import Iterable
 from pathlib import Path
@@ -181,3 +182,64 @@ def create_coco_split(
         f"Created COCO dataset in {output_dir}"
         f" with {len(coco_data['images'])} images and {len(coco_data['annotations'])} annotations."
     )
+
+
+def convert_yolo_to_coco(
+    input_dir: str,
+    output_dir: str,
+    image_ext: list[str] = [".jpg", ".png"],
+    split_ratios: tuple[float, float, float] = (0.7, 0.2, 0.1),
+    class_names: dict[int, str] = None,
+) -> str:
+    """Convert a YOLO dataset to COCO format.
+
+    Scans input_dir for images in 'images' subdir and labels in 'labels' subdir, pairs them by filename,
+    splits into train/valid/test, and creates COCO annotations in each split dir.
+
+    Args:
+        input_dir: Input directory containing 'images' and 'labels' subdirectories.
+        output_dir: Output directory for the prepared COCO dataset.
+        image_ext: List of image file extensions to include.
+        split_ratios: Tuple of (train, valid, test) ratios that sum to 1.0.
+        class_names: Optional mapping from class id to class name for COCO categories.
+    """
+    input_path = Path(input_dir)
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    logging.info(f"Scanning input directory '{input_path}' and preparing dataset in '{output_path}'")
+
+    image_paths = []
+    for ext in image_ext:
+        list_imgs = (input_path / "images").glob(f"*{ext}")
+        image_paths.extend(list(list_imgs))
+
+    label_paths = [input_path / "labels" / f"{p.stem}.txt" for p in image_paths]
+    assert len(label_paths) == len(image_paths), "Mismatch between number of images and labels"
+
+    image_annotation_pairs = list(zip(image_paths, label_paths))
+    random.shuffle(image_annotation_pairs)
+
+    assert len(split_ratios) == 3, "Split ratios must be a tuple of three values (train, valid, test)"
+    assert sum(split_ratios) == 1.0, "Split ratios must sum to 1.0"
+
+    total_files = len(image_annotation_pairs)
+    train_count = int(total_files * split_ratios[0])
+    valid_count = int(total_files * split_ratios[1])
+    test_count = total_files - train_count - valid_count
+
+    splits = [
+        ("train", 0, train_count),
+        ("valid", train_count, valid_count),
+        ("test", train_count + valid_count, test_count),
+    ]
+
+    # Create subdirectories for train, valid, and test sets and COCO datasets for each split
+    for split_name, split_start, split_len in splits:
+        files_split = image_annotation_pairs[split_start : split_start + split_len]
+        split_dir = output_path / split_name
+        split_dir.mkdir(exist_ok=True)
+        logging.info(f"{split_name.capitalize()} set: {len(files_split)} images")
+        create_coco_split(files_split, str(split_dir), dataset_id_offset=split_start, class_names=class_names)
+
+    logging.info(f"Dataset preparation complete. The prepared dataset is in: {output_path}")
+    return str(output_path)
