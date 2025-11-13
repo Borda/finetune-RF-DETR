@@ -39,6 +39,7 @@ Thank you for your interest in contributing to the RF-DETR Training Pipeline! We
 - Linting and formatting are handled by pre-commit hooks using `ruff`.
 
 Pre-commit will automatically run checks on commit. To run manually:
+
 ```bash
 pre-commit run --all-files
 ```

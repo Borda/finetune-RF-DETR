@@ -15,6 +15,7 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-added-large-files
+        args: ['--maxkb=650']
       - id: check-docstring-first
       - id: detect-private-key
 

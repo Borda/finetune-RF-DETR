@@ -1,4 +1,4 @@
-epochs: 5  # Number of training epochs
+epochs: 20  # Number of training epochs
 batch_size: 4  # Batch size (adjust based on GPU memory)
 imgsz: 640  # Input image size
 #dataset_dir: str(prepared_dataset_dir)  # Path to your dataset directory
