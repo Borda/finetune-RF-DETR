@@ -1,10 +1,9 @@
 """Utilities for converting annotation files and images into COCO-style datasets.
 
-This module provides helpers to parse label files (supporting multiple common
-annotation formats and simple autodetection heuristics) and to assemble a
-COCO-format dataset (images + annotations + categories). Function docstrings
-describe behaviors and expectations without duplicating type information already
-present in function signatures.
+This module provides helpers to parse label files (supporting multiple common annotation formats and simple
+autodetection heuristics) and to assemble a COCO-format dataset (images + annotations + categories). Function docstrings
+describe behaviors and expectations without duplicating type information already present in function signatures.
+
 """
 
 import datetime
@@ -40,6 +39,7 @@ def parse_yolo_annotations(
     Returns:
         A tuple (annotations, new_counter) where annotations is a list of COCO-style
         dicts (image_id left as None) and new_counter is the updated annotation id counter.
+
     """
     coco_annotations: list[dict[str, Any]] = []
     label_path = Path(label_path)
@@ -124,6 +124,7 @@ def create_coco_split(
 
     Returns:
         None. Produces files on disk (copied images and the annotations JSON).
+
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -202,6 +203,7 @@ def convert_yolo_to_coco(
         image_ext: List of image file extensions to include.
         split_ratios: Tuple of (train, valid, test) ratios that sum to 1.0.
         class_names: Optional mapping from class id to class name for COCO categories.
+
     """
     input_path = Path(input_dir)
     output_path = Path(output_dir)

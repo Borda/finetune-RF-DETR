@@ -26,6 +26,7 @@ def prediction(
         image_path: Path to the input image.
         confidence: Confidence threshold for predictions.
         class_names: Optional mapping from class id to class name.
+
     """
     assert model_size.lower() in MAP_MODEL_SIZE.keys(), f"Model size must be one of {list(MAP_MODEL_SIZE.keys())}"
     logging.info(f"Loading model from {model_size}")

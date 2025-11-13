@@ -1,79 +1,88 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+
+requires = [ "setuptools>=61", "wheel" ]
+
 [project]
 name = "rf-detr-training-pipeline"
-dynamic = ["version"]
 description = "A modular fine-tuning pipeline for RF-DETR (Real-time DEtection TRansformer) models"
 readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"}
+keywords = [ "deep-learning", "fine-tuning", "object-detection", "rf-detr", "training-pipeline", "transformer" ]
+license = { text = "MIT" }
 authors = [
-    {name = "Borda", email = "6035284+Borda@users.noreply.github.com"},
+  { name = "Borda", email = "6035284+Borda@users.noreply.github.com" },
 ]
-keywords = ["deep-learning", "object-detection", "transformer", "rf-detr", "fine-tuning", "training-pipeline"]
+requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dynamic = [ "version" ]
 dependencies = [
   "rfdetr",
   "supervision",
 ]
 
-[project.optional-dependencies]
-cli = [
+optional-dependencies.cli = [
   "jsonargparse",
 ]
-data = [
+optional-dependencies.data = [
   "kagglehub",
 ]
-dev = [
-  "pytest",
+optional-dependencies.dev = [
   "pre-commit",
+  "pytest",
 ]
-
-[project.urls]
-Homepage = "https://github.com/Borda/rf-detr-training-pipeline"
-Repository = "https://github.com/Borda/rf-detr-training-pipeline"
-Issues = "https://github.com/Borda/rf-detr-training-pipeline/issues"
-
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+urls.Homepage = "https://github.com/Borda/rf-detr-training-pipeline"
+urls.Issues = "https://github.com/Borda/rf-detr-training-pipeline/issues"
+urls.Repository = "https://github.com/Borda/rf-detr-training-pipeline"
 
 [tool.setuptools.dynamic]
-version = {attr = "rf_detr_finetuning.__version__"}
+version = { attr = "rf_detr_finetuning.__version__" }
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = [ "src" ]
 
 [tool.ruff]
-line-length = 120
 target-version = "py310"
 
-[tool.ruff.lint]
-select = [
-    "E",   # pycodestyle errors (includes E501 for line length)
-    "F",   # Pyflakes
-    "W",   # pycodestyle warnings
-    "I",   # isort
-    "UP",  # pyupgrade
-    "D",   # pydocstyle
+line-length = 120
+lint.select = [
+  "D",  # pydocstyle
+  "E",  # pycodestyle errors (includes E501 for line length)
+  "F",  # Pyflakes
+  "I",  # isort
+  "UP", # pyupgrade
+  "W",  # pycodestyle warnings
 ]
+lint.per-file-ignores."**/test_*.py" = [ "D" ] # Exclude pydocstyle for test files
+lint.per-file-ignores."tests/**" = [ "D" ] # Exclude pydocstyle for tests
+lint.pydocstyle.convention = "google"
 
-[tool.ruff.lint.per-file-ignores]
-"tests/**" = ["D"]  # Exclude pydocstyle for tests
-"**/test_*.py" = ["D"]  # Exclude pydocstyle for test files
+[tool.codespell]
+#skip = '*.py'
+quiet-level = 3
+#ignore-words-list = """
+#  typpo, \
+#  baddtypo
+#"""
 
-[tool.ruff.lint.pydocstyle]
-convention = "google"
+[tool.docformatter]
+recursive = true
+# some docstring start with r"""
+wrap-summaries = 119
+wrap-descriptions = 120
+blank = true
 
 [tool.pytest.ini_options]
 color = "yes"
-testpaths = ["tests"]
+testpaths = [ "tests" ]
 addopts = "-v --tb=short"

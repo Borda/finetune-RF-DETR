@@ -24,6 +24,7 @@ def finetune_model(model_size: str, dataset_path: str, config: dict) -> dict:
         model_size: Size of the RF-DETR model to use (one of 'base', 'small', 'nano', 'large', 'medium').
         dataset_path: Path to the dataset directory containing images and annotations.
         config: Dictionary of training configuration parameters.
+
     """
     assert model_size.lower() in MAP_MODEL_SIZE.keys(), f"Model size must be one of {list(MAP_MODEL_SIZE.keys())}"
     logging.info(f"Loading model from {model_size}")

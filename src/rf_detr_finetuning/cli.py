@@ -21,6 +21,7 @@ def download_kaggle_dataset(name: str, dest: str = "data", force: bool = False) 
         name: Name of the Kaggle dataset to download.
         dest: Destination directory for the downloaded dataset.
         force: Whether to force re-download if the dataset already exists.
+
     """
     # Local import to keep dependency usage explicit and avoid import-time failures
     import kagglehub
@@ -46,6 +47,7 @@ def train(config_file: str, dataset: str, model_size: Literal[tuple(MAP_MODEL_SI
         config_file: Path to the YAML training configuration file.
         dataset: Path to the prepared dataset directory.
         model_size: Size of the RF-DETR model to use.
+
     """
     with open(config_file) as f:
         cfg = yaml.safe_load(f)
@@ -80,6 +82,7 @@ def predict(
         model_path: Path to the model checkpoint or pretrained model name.
         confidence: Confidence threshold for predictions.
         class_names: Optional mapping from class id to class name.
+
     """
     visual = prediction(
         image_path=image_path,
