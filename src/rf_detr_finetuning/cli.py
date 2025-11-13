@@ -5,15 +5,16 @@ import random
 import shutil
 from pathlib import Path
 
-from tqdm.auto import tqdm
-
-from .data import create_coco_split
+from rf_detr_finetuning.data import create_coco_split
 
 
 def download_kaggle_dataset(name: str, dest: str = "data", force: bool = False) -> str:
     """Download a Kaggle dataset into dest using the Kaggle API.
 
-    Requires a valid ~/.kaggle/kaggle.json or environment variables for authentication.
+    Args:
+        name: Name of the Kaggle dataset to download.
+        dest: Destination directory for the downloaded dataset.
+        force: Whether to force re-download if the dataset already exists.
     """
     # Local import to keep dependency usage explicit and avoid import-time failures
     import kagglehub
@@ -41,9 +42,15 @@ def convert_yolo_to_coco(
 ) -> str:
     """Convert a YOLO dataset to COCO format.
 
-    Scans input_dir for images and labels, pairs them, splits into train/valid/test, and creates COCO annotations.
-    image_ext can be a list to include multiple formats like .jpg and .png.
-    split_ratios is a tuple of (train, valid, test) ratios that sum to 1.0.
+    Scans input_dir for images in 'images' subdir and labels in 'labels' subdir, pairs them by filename,
+    splits into train/valid/test, and creates COCO annotations in each split dir.
+
+    Args:
+        input_dir: Input directory containing 'images' and 'labels' subdirectories.
+        output_dir: Output directory for the prepared COCO dataset.
+        image_ext: List of image file extensions to include.
+        split_ratios: Tuple of (train, valid, test) ratios that sum to 1.0.
+        class_names: Optional mapping from class id to class name for COCO categories.
     """
     input_path = Path(input_dir)
     output_path = Path(output_dir)
@@ -76,7 +83,7 @@ def convert_yolo_to_coco(
     ]
 
     # Create subdirectories for train, valid, and test sets and COCO datasets for each split
-    for split_name, split_start, split_len in tqdm(splits):
+    for split_name, split_start, split_len in splits:
         files_split = image_annotation_pairs[split_start : split_start + split_len]
         split_dir = output_path / split_name
         split_dir.mkdir(exist_ok=True)

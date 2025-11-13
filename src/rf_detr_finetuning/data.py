@@ -118,7 +118,8 @@ def create_coco_split(
         file_list: iterable of (image_path, label_path) tuples.
         output_dir: destination directory for images and the annotations JSON.
         dataset_id_offset: offset added to generated image ids (useful to avoid id collisions).
-        class_names: mapping from class id to class name used to populate categories.
+        class_names: optional mapping from class id to class name used to populate categories
+            (defaults to empty dict if None).
 
     Returns:
         None. Produces files on disk (copied images and the annotations JSON).
