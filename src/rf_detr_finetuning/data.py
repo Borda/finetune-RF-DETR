@@ -136,17 +136,20 @@ def convert_yolo_to_coco(
     Args:
         input_dir: Input directory containing 'images' and 'labels' subdirectories.
         output_dir: Output directory for the prepared COCO dataset.
-        image_ext: List of image file extensions to include (currently handled by supervision's auto-detection).
+        image_ext: Deprecated parameter kept for backward compatibility. Image file detection is now
+            handled automatically by the supervision package.
         split_ratios: Tuple of (train, valid, test) ratios that sum to 1.0.
         class_names: Optional mapping from class id to class name for COCO categories.
+            Required if 'data.yaml' does not exist in input_dir.
         random_state: Optional seed for reproducible dataset splitting.
 
     Returns:
         Path to the output directory.
 
     """
-    if image_ext is None:
-        image_ext = [".jpg", ".png"]
+    # Note: image_ext is kept for backward API compatibility but no longer used
+    # as supervision handles file detection automatically
+    _ = image_ext
 
     input_path = Path(input_dir)
     output_path = Path(output_dir)
@@ -168,6 +171,8 @@ def convert_yolo_to_coco(
                 "Either 'data.yaml' must exist in input_dir or 'class_names' must be provided "
                 "to specify the class mapping."
             )
+        if not class_names:
+            raise ValueError("'class_names' dictionary cannot be empty when 'data.yaml' does not exist.")
         # Create a temporary data.yaml file from class_names
         temp_yaml_context = tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False)
         # Convert dict[int, str] to list format expected by supervision

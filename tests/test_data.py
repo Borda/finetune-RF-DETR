@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import yaml
 from PIL import Image
 
 from rf_detr_finetuning.data import convert_yolo_to_coco, parse_yolo_annotations
@@ -114,8 +115,6 @@ def test_convert_yolo_to_coco():
 
 def test_convert_yolo_to_coco_with_data_yaml():
     """Test converting YOLO dataset with existing data.yaml file."""
-    import yaml
-
     with tempfile.TemporaryDirectory() as tmpdir:
         input_dir = Path(tmpdir) / "input"
         output_dir = Path(tmpdir) / "output"
@@ -159,3 +158,32 @@ def test_convert_yolo_to_coco_with_data_yaml():
         category_names = [cat["name"] for cat in coco_data["categories"]]
         assert "cat" in category_names
         assert "dog" in category_names
+
+
+def test_convert_yolo_to_coco_empty_class_names_error():
+    """Test that empty class_names dict raises ValueError when data.yaml doesn't exist."""
+    import pytest
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        input_dir = Path(tmpdir) / "input"
+        output_dir = Path(tmpdir) / "output"
+
+        # Create input directory structure (without data.yaml)
+        images_dir = input_dir / "images"
+        labels_dir = input_dir / "labels"
+        images_dir.mkdir(parents=True)
+        labels_dir.mkdir(parents=True)
+
+        # Create a single test image and label
+        img = Image.fromarray(np.zeros((100, 100, 3), dtype=np.uint8))
+        img.save(images_dir / "img_0.jpg")
+        with open(labels_dir / "img_0.txt", "w") as f:
+            f.write("0 0.5 0.5 0.2 0.2\n")
+
+        # Attempt conversion with empty class_names (should raise error)
+        with pytest.raises(ValueError, match="'class_names' dictionary cannot be empty"):
+            convert_yolo_to_coco(
+                input_dir=str(input_dir),
+                output_dir=str(output_dir),
+                class_names={},
+            )
