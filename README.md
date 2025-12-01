@@ -158,7 +158,7 @@ This pipeline provides a complete solution for RF-DETR fine-tuning:
 - **Easy customization**: YAML configs and modular design make it simple to adapt
 - **Community standards**: Following best practices with CI/CD, pre-commit hooks, and contribution guidelines
 
-The training implementation is ready for extension - currently includes the CLI structure and data pipeline, with the actual RF-DETR training logic ready to be integrated based on your specific use case.
+The training implementation is ready for extension - currently includes the CLI structure and data pipeline, with the actual RF-DETR training setup ready to be integrated based on your specific use case.
 
 ## Configuration ⚙️
 

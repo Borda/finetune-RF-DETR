@@ -211,3 +211,5 @@ __marimo__/
 
 # Local data files
 data/
+# Training artifacts
+output/
