@@ -9,12 +9,14 @@ The module leverages the `supervision` package for dataset loading, splitting, a
 """
 
 import logging
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Any
 
 import supervision as sv
 import yaml
+from PIL import Image
 
 
 def parse_yolo_annotations(
@@ -183,67 +185,76 @@ def convert_yolo_to_coco(
         temp_yaml_context.flush()
         data_yaml_path = Path(temp_yaml_context.name)
 
-    try:
-        # Load dataset using supervision
-        dataset = sv.DetectionDataset.from_yolo(
-            images_directory_path=str(input_path / "images"),
-            annotations_directory_path=str(input_path / "labels"),
-            data_yaml_path=str(data_yaml_path),
+    # Preprocess images: convert RGBA to RGB
+    temp_images_dir = tempfile.mkdtemp()
+    temp_images_path = Path(temp_images_dir)
+    for img_path in (input_path / "images").iterdir():
+        if img_path.is_file():
+            with Image.open(img_path) as img:
+                if img.mode == 'RGBA':
+                    img = img.convert('RGB')
+                img.save(temp_images_path / img_path.name)
+
+    # Load dataset using supervision
+    dataset = sv.DetectionDataset.from_yolo(
+        images_directory_path=str(temp_images_path),
+        annotations_directory_path=str(input_path / "labels"),
+        data_yaml_path=str(data_yaml_path),
+    )
+
+    logging.info(f"Loaded {len(dataset)} images with classes: {dataset.classes}")
+
+    # Split dataset into train and remaining (valid + test)
+    train_ratio = split_ratios[0]
+    remaining_ratio = split_ratios[1] + split_ratios[2]
+
+    if train_ratio > 0 and remaining_ratio > 0:
+        train_ds, remaining_ds = dataset.split(
+            split_ratio=train_ratio,
+            random_state=random_state,
+            shuffle=True,
         )
+    elif train_ratio > 0:
+        train_ds = dataset
+        remaining_ds = None
+    else:
+        train_ds = None
+        remaining_ds = dataset
 
-        logging.info(f"Loaded {len(dataset)} images with classes: {dataset.classes}")
+    # Split remaining into valid and test
+    if remaining_ds is not None and len(remaining_ds) > 0 and split_ratios[1] > 0 and split_ratios[2] > 0:
+        # Calculate the ratio of valid within the remaining portion
+        valid_ratio_in_remaining = split_ratios[1] / remaining_ratio
+        valid_ds, test_ds = remaining_ds.split(
+            split_ratio=valid_ratio_in_remaining,
+            random_state=random_state,
+            shuffle=True,
+        )
+    elif remaining_ds is not None and split_ratios[1] > 0:
+        valid_ds = remaining_ds
+        test_ds = None
+    elif remaining_ds is not None and split_ratios[2] > 0:
+        valid_ds = None
+        test_ds = remaining_ds
+    else:
+        valid_ds = None
+        test_ds = None
 
-        # Split dataset into train and remaining (valid + test)
-        train_ratio = split_ratios[0]
-        remaining_ratio = split_ratios[1] + split_ratios[2]
+    # Export each split to COCO format
+    if train_ds is not None and len(train_ds) > 0:
+        _export_dataset_split(train_ds, output_path, "train")
 
-        if train_ratio > 0 and remaining_ratio > 0:
-            train_ds, remaining_ds = dataset.split(
-                split_ratio=train_ratio,
-                random_state=random_state,
-                shuffle=True,
-            )
-        elif train_ratio > 0:
-            train_ds = dataset
-            remaining_ds = None
-        else:
-            train_ds = None
-            remaining_ds = dataset
+    if valid_ds is not None and len(valid_ds) > 0:
+        _export_dataset_split(valid_ds, output_path, "valid")
 
-        # Split remaining into valid and test
-        if remaining_ds is not None and len(remaining_ds) > 0 and split_ratios[1] > 0 and split_ratios[2] > 0:
-            # Calculate the ratio of valid within the remaining portion
-            valid_ratio_in_remaining = split_ratios[1] / remaining_ratio
-            valid_ds, test_ds = remaining_ds.split(
-                split_ratio=valid_ratio_in_remaining,
-                random_state=random_state,
-                shuffle=True,
-            )
-        elif remaining_ds is not None and split_ratios[1] > 0:
-            valid_ds = remaining_ds
-            test_ds = None
-        elif remaining_ds is not None and split_ratios[2] > 0:
-            valid_ds = None
-            test_ds = remaining_ds
-        else:
-            valid_ds = None
-            test_ds = None
+    if test_ds is not None and len(test_ds) > 0:
+        _export_dataset_split(test_ds, output_path, "test")
 
-        # Export each split to COCO format
-        if train_ds is not None and len(train_ds) > 0:
-            _export_dataset_split(train_ds, output_path, "train")
+    # Clean up temporary files
+    shutil.rmtree(temp_images_dir)
+    if temp_yaml_context is not None:
+        temp_yaml_context.close()
+        data_yaml_path.unlink()
 
-        if valid_ds is not None and len(valid_ds) > 0:
-            _export_dataset_split(valid_ds, output_path, "valid")
-
-        if test_ds is not None and len(test_ds) > 0:
-            _export_dataset_split(test_ds, output_path, "test")
-
-        logging.info(f"Dataset preparation complete. The prepared dataset is in: {output_path}")
-        return str(output_path)
-
-    finally:
-        # Clean up temporary yaml file if created
-        if temp_yaml_context is not None:
-            temp_yaml_context.close()
-            Path(temp_yaml_context.name).unlink(missing_ok=True)
+    logging.info(f"Dataset preparation complete. The prepared dataset is in: {output_path}")
+    return str(output_path)
