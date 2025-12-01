@@ -63,7 +63,7 @@ def test_convert_yolo_to_coco(split_ratios, expected_splits, tmpdir):
 
         # Create a label file with a single annotation
         label_path = labels_dir / f"img_{i}.txt"
-        with open(label_path, "w") as f:
+        with open(label_path, "w", encoding="utf_8") as f:
             f.write("0 0.5 0.5 0.2 0.2\n")
 
     # Define class names
@@ -131,7 +131,7 @@ def test_convert_yolo_to_coco_with_data_yaml(tmpdir):
         img.save(images_dir / f"img_{i}.jpg")
 
         label_path = labels_dir / f"img_{i}.txt"
-        with open(label_path, "w") as f:
+        with open(label_path, "w", encoding="utf_8") as f:
             f.write(f"{i % 2} 0.5 0.5 0.3 0.3\n")
 
     # Run conversion without class_names (should use data.yaml)
